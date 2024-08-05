@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.NAME }}-kd"
+  namespace: "{{ .Values.NAMESPACE }}"
+  labels:
+    environment: "{{ .Values.NAMESPACE }}"
+    app: "{{ .Values.APP }}"
+    microservice: "{{ .Values.MICROSERVICE }}"
+spec:
+  replicas: {{ .Values.K8S_REPLICAS }}
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: {{ .Values.K8S_MAX_UNAVAIL }}
+      maxSurge: {{ .Values.K8S_MAX_SURGE }}
+  selector:
+    matchLabels:
+      environment: "{{ .Values.NAMESPACE }}"
+      app: "{{ .Values.APP }}"
+      microservice: "{{ .Values.MICROSERVICE }}"
+  template:
+    metadata:
+      labels:
+        environment: "{{ .Values.NAMESPACE }}"
+        app: "{{ .Values.APP }}"
+        microservice: "{{ .Values.MICROSERVICE }}"
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: "{{ .Values.NAME }}-kc"
+        image: "{{ .Values.DOCKER_APP_IMAGE }}"
+        # resources:
+        #   requests: 
+        #     memory: {{ .Values.K8S_REQ_MEM }}
+        #     cpu: {{ .Values.K8S_REQ_CPU }}
+        #   limits:
+        #     memory: {{ .Values.K8S_LIMIT_MEM }}
+        #     cpu: {{ .Values.K8S_LIMIT_CPU }}
+        ports:
+        - containerPort: 8080

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.NAME }}-svc"
+  namespace: "{{ .Values.NAMESPACE }}"
+spec:
+  type: ClusterIP
+  selector:
+    environment: "{{ .Values.NAMESPACE }}"
+    app: "{{ .Values.APP }}"
+    microservice: "{{ .Values.MICROSERVICE }}"
+  ports:
+  - name: default
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
